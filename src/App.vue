@@ -1,21 +1,18 @@
 <template>
-    <div class="wrapper">
-        <form class="form" @submit.prevent>
-            <h3>Создание поста</h3>
-            <input v-bind:value='title' @input="title = $event.target.value" class="input" type="text"
-                placeholder="title">
-            <input v-bind:value='body' @input="body = $event.target.value" class="input" type="text" placeholder="body">
-            <button @click="addPost">Add post</button>
-        </form>
-        <div class="post" v-for="post in posts">
-            <div>Название: {{ post.title }}</div>
-            <div>Описание: {{ post.body }}</div>
-        </div>
+    <div class="app">
+        <PostForm @create="createPost" />
+        <PostList :posts="posts" />
     </div>
 </template>
 
 <script>
+import PostForm from "@/components/PostForm";
+import PostList from "@/components/PostList";
+
 export default {
+    components: {
+        PostForm, PostList
+    },
     data() {
         return {
             posts: [
@@ -24,18 +21,11 @@ export default {
                 { id: 1, title: 'Java Script3', body: 'Описание' },
                 { id: 1, title: 'Java Script4', body: 'Описание' },
             ],
-            title: '',
-            body: '',
         }
     },
     methods: {
-        addPost() {
-            const newPost = {
-                id: Date.now(),
-                title: this.title,
-                body: this.body,
-            }
-            this.posts.push(newPost);
+        createPost(post) {
+            this.posts.push(post);
         },
     }
 }
@@ -132,25 +122,7 @@ h6 {
     font-weight: 400;
 }
 
-.post {
-    padding: 15px;
-    border: 2px solid green;
-    margin-bottom: 15px;
-}
-
-.input {
-    padding: 5px;
-    border: 2px solid green;
-}
-
-.form {
-    font-size: 25px;
-    display: grid;
-    gap: 5px;
-    margin-bottom: 5px;
-}
-
-.wrapper {
+.app {
     padding: 20px;
 }
 </style>
