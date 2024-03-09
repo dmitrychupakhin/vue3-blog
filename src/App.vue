@@ -16,7 +16,8 @@
       v-if="!isPostsLoading"
     />
     <div v-else>Загрузка...</div>
-    <div class="page__wrapper">
+    <div ref="observer" class="observer"></div>
+    <!--  <div class="page__wrapper">
       <div
         v-for="pageNumber in totalPages"
         :key="pageNumber"
@@ -28,7 +29,7 @@
       >
         {{ pageNumber }}
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -69,10 +70,9 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     },
-    changePage(pageNumber) {
+    /*  changePage(pageNumber) {
       this.page = pageNumber;
-      this.fetchPosts();
-    },
+    }, */
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
@@ -90,9 +90,36 @@ export default {
         this.isPostsLoading = false;
       }
     },
+    async loadMorePosts() {
+      try {
+        this.page += 1;
+        const response = await axios.get("https://jsonplaceholder.typicode.com/posts", {
+          params: {
+            _page: this.page,
+            _limit: this.limit,
+          },
+        });
+        this.totalPages = Math.ceil(response.headers["x-total-count"] / this.limit);
+        this.posts = [...this.posts, ...response.data];
+      } catch (e) {
+        alert("Ошибка");
+      }
+    },
   },
+
   mounted() {
     this.fetchPosts();
+    var options = {
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+    var callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPages) {
+        this.loadMorePosts();
+      }
+    };
+    var observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
   computed: {
     sortedPosts() {
@@ -111,6 +138,9 @@ export default {
       this.posts.sort((post1, post2) => {
         return post1[newValue]?.localeCompare(post2[newValue]);
       });
+    },
+    page() {
+      /* this.fetchPosts(); */
     },
   },
 };
@@ -225,5 +255,9 @@ h6 {
 }
 .current-page {
   border: 2px solid red;
+}
+.observer {
+  height: 30px;
+  background: red;
 }
 </style>
