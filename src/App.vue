@@ -1,12 +1,20 @@
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
+    <MyInput v-model="searchQuery" placeholder="Search" />
+    <div class="app__buttons">
+      <MyButton @click="showDialog">Создать пост</MyButton>
+      <MySelect v-model="selectedSort" :options="sortOptions"></MySelect>
+    </div>
     <input type="text" />
-    <MyButton @click="showDialog">Создать пост</MyButton>
     <MyDialog v-model:show="dialogVisible">
       <PostForm @create="createPost" />
     </MyDialog>
-    <PostList :posts="posts" @remove="removePost" v-if="!isPostsLoading" />
+    <PostList
+      :posts="sortedAndSearchedPosts"
+      @remove="removePost"
+      v-if="!isPostsLoading"
+    />
     <div v-else>Загрузка...</div>
   </div>
 </template>
@@ -26,6 +34,12 @@ export default {
       posts: [],
       dialogVisible: false,
       isPostsLoading: true,
+      selectedSort: "",
+      searchQuery: "",
+      sortOptions: [
+        { value: "title", name: "По названию" },
+        { value: "body", name: "По описанию" },
+      ],
     };
   },
   methods: {
@@ -42,20 +56,36 @@ export default {
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
-        setTimeout(async () => {
-          const response = await axios.get(
-            "https://jsonplaceholder.typicode.com/posts?_limit=10"
-          );
-          this.posts = response.data;
-          this.isPostsLoading = false;
-        }, 1000);
+        const response = await axios.get(
+          "https://jsonplaceholder.typicode.com/posts?_limit=10"
+        );
+        this.posts = response.data;
       } catch (e) {
         alert("Ошибка");
+      } finally {
+        this.isPostsLoading = false;
       }
     },
   },
   mounted() {
     this.fetchPosts();
+  },
+  computed: {
+    sortedPosts() {
+      return [...this.posts].sort((post1, post2) =>
+        post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+      );
+    },
+    sortedAndSearchedPosts() {
+      return this.sortedPosts.filter((post) => post.title.includes(this.searchQuery));
+    },
+  },
+  watch: {
+    selectedSort(newValue) {
+      this.posts.sort((post1, post2) => {
+        return post1[newValue]?.localeCompare(post2[newValue]);
+      });
+    },
   },
 };
 </script>
@@ -153,5 +183,10 @@ h6 {
 
 .app {
   padding: 20px;
+}
+
+.app__buttons {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
