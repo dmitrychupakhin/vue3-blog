@@ -1,8 +1,8 @@
 <template>
-    <div class="app">
-        <PostForm @create="createPost" />
-        <PostList :posts="posts" />
-    </div>
+  <div class="app">
+    <PostForm @create="createPost" />
+    <PostList :posts="posts" @remove="removePost" />
+  </div>
 </template>
 
 <script>
@@ -10,106 +10,110 @@ import PostForm from "@/components/PostForm";
 import PostList from "@/components/PostList";
 
 export default {
-    components: {
-        PostForm, PostList
+  components: {
+    PostForm,
+    PostList,
+  },
+  data() {
+    return {
+      posts: [
+        { id: 1, title: "Java Script1 ", body: "Описание" },
+        { id: 2, title: "Java Script2", body: "Описание" },
+        { id: 3, title: "Java Script3", body: "Описание" },
+        { id: 4, title: "Java Script4", body: "Описание" },
+      ],
+    };
+  },
+  methods: {
+    createPost(post) {
+      this.posts.push(post);
     },
-    data() {
-        return {
-            posts: [
-                { id: 1, title: 'Java Script1 ', body: 'Описание' },
-                { id: 1, title: 'Java Script2', body: 'Описание' },
-                { id: 1, title: 'Java Script3', body: 'Описание' },
-                { id: 1, title: 'Java Script4', body: 'Описание' },
-            ],
-        }
+    removePost(post) {
+      this.posts = this.posts.filter((p) => p.id !== post.id);
     },
-    methods: {
-        createPost(post) {
-            this.posts.push(post);
-        },
-    }
-}
+  },
+};
 </script>
 
 <style>
 /*Обнуление*/
 * {
-    padding: 0;
-    margin: 0;
-    border: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
 }
 
 *,
 *:before,
 *:after {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 :focus,
 :active {
-    outline: none;
+  outline: none;
 }
 
 a:focus,
 a:active {
-    outline: none;
+  outline: none;
 }
 
 nav,
 footer,
 header,
 aside {
-    display: block;
+  display: block;
 }
 
 html,
 body {
-    height: 100%;
-    width: 100%;
-    font-size: 100%;
-    line-height: 1;
-    font-size: 14px;
-    -ms-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
+  height: 100%;
+  width: 100%;
+  font-size: 100%;
+  line-height: 1;
+  font-size: 14px;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 input,
 button,
 textarea {
-    font-family: inherit;
+  font-family: inherit;
 }
 
 input::-ms-clear {
-    display: none;
+  display: none;
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 button::-moz-focus-inner {
-    padding: 0;
-    border: 0;
+  padding: 0;
+  border: 0;
 }
 
 a,
 a:visited {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 ul li {
-    list-style: none;
+  list-style: none;
 }
 
 img {
-    vertical-align: top;
+  vertical-align: top;
 }
 
 h1,
@@ -118,11 +122,11 @@ h3,
 h4,
 h5,
 h6 {
-    font-size: inherit;
-    font-weight: 400;
+  font-size: inherit;
+  font-weight: 400;
 }
 
 .app {
-    padding: 20px;
+  padding: 20px;
 }
 </style>

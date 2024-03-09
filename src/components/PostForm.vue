@@ -1,45 +1,45 @@
 <template>
-    <form class="form" @submit.prevent>
-        <h3>Создание поста</h3>
-        <input v-model="post.title" class="input" type="text" placeholder="title">
-        <input v-model="post.body" class="input" type="text" placeholder="body">
-        <button @click="createPost">Add post</button>
-    </form>
+  <form class="form" @submit.prevent>
+    <h3>Создание поста</h3>
+    <MyInput v-model="post.title" placeholder="title" />
+    <MyInput v-model="post.body" placeholder="body" />
+    <div>
+      <MyButton @click="createPost"> AddPost </MyButton>
+    </div>
+  </form>
 </template>
 
 <script>
+import MyInput from "./UI/MyInput.vue";
 export default {
-    data() {
-        return {
-            post: {
-                title: '',
-                body: '',
-            }
-        }
+  components: {},
+  data() {
+    return {
+      post: {
+        title: "",
+        body: "",
+      },
+    };
+  },
+  methods: {
+    createPost() {
+      this.post.id = Date.now();
+      this.$emit("create", this.post);
+      this.post = {
+        title: "",
+        body: "",
+      };
     },
-    methods: {
-        createPost() {
-            this.post.id = Date.now();
-            this.$emit('create', this.post);
-            this.post = {
-                title: '',
-                body: '',
-            }
-        }
-    }
-}
+  },
+};
 </script>
 
 <style scoped>
-.input {
-    padding: 5px;
-    border: 2px solid green;
-}
-
 .form {
-    font-size: 25px;
-    display: grid;
-    gap: 5px;
-    margin-bottom: 5px;
+  font-size: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 5px;
 }
 </style>
